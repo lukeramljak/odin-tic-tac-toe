@@ -25,6 +25,18 @@ function GameBoard() {
     console.log(boardWithCellValues);
   };
 
+  const boardIsFull = () => {
+    const boardRows = getBoard();
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+        if (boardRows[i][j].getValue() === '') {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
   return {
     rows,
     columns,
@@ -32,6 +44,7 @@ function GameBoard() {
     getCell,
     placeToken,
     printBoard,
+    boardIsFull,
   };
 }
 
@@ -86,12 +99,19 @@ function GameController(
   const playRound = (row, column) => {
     if (board.getCell(row, column).isAvailable()) {
       board.placeToken(row, column, getActivePlayer().token);
-      switchPlayerTurn();
+
+      const winner = checkOverallWinner();
+      if (winner) {
+        endGame(winner);
+      } else if (board.boardIsFull()) {
+        endGame();
+      } else {
+        switchPlayerTurn();
+        printNewRound();
+      }
     } else {
       console.log('Cell is taken. Try again');
     }
-    printNewRound();
-    checkOverallWinner();
   };
 
   const allEqualRows = (arr) => {
@@ -164,15 +184,15 @@ function GameController(
 
     if (rowWinner || columnWinner || diagonalWinner) {
       const winnerToken = rowWinner || columnWinner || diagonalWinner;
-      endGame(winnerToken);
+      const winner = players.find((player) => player.token === winnerToken);
+      endGame(winner);
+      return winner;
     }
 
     return null;
   };
 
-  const endGame = (winnerToken) => {
-    const winner = players.find((player) => player.token === winnerToken);
-
+  const endGame = (winner) => {
     if (winner) {
       console.log(`Game over. ${winner.name} wins!`);
     } else {
@@ -185,7 +205,10 @@ function GameController(
   return {
     playRound,
     getActivePlayer,
+    checkOverallWinner,
   };
 }
 
 const game = GameController();
+
+module.exports = GameController;
