@@ -205,6 +205,11 @@ function ScreenController() {
     }
 
     if (winner || game.boardIsFull()) {
+      if (winner) {
+        playerTurnDiv.classList.add('winner');
+      } else {
+        playerTurnDiv.classList.add('draw');
+      }
       const cells = document.querySelectorAll('.cell');
       cells.forEach((cell) => {
         cell.classList.add('disabled');
