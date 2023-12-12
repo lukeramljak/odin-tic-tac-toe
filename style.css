@@ -9,9 +9,12 @@
 }
 
 body {
+  font-family: 'Roboto', sans-serif;
   display: grid;
   place-content: center;
   height: 100dvh;
+  background-color: #1a202c;
+  color: #cbd5e0;
 }
 
 .board {
@@ -20,6 +23,42 @@ body {
   display: grid;
   grid-template-columns: repeat(3, var(--cell-size));
   grid-template-rows: repeat(3, var(--cell-size));
+  gap: 10px;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+}
+
+h1 {
+  color: #a0aec0;
+}
+
+.turn {
+  color: #a0aec0;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  background-color: #2d3748;
+  color: #a0aec0;
+  border: 1px solid #4a5568;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.cell:hover {
+  background-color: #4a5568;
 }
 
 .cell.disabled {
