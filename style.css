@@ -8,8 +8,20 @@
   margin: 0;
 }
 
-.board {
+body {
   display: grid;
-  grid-template-columns: repeat(3, 100px);
-  grid-template-rows: repeat(3, 100px);
+  place-content: center;
+  height: 100dvh;
+}
+
+.board {
+  --cell-size: 100px;
+
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size));
+  grid-template-rows: repeat(3, var(--cell-size));
+}
+
+.cell.disabled {
+  pointer-events: none;
 }

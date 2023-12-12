@@ -18,42 +18,19 @@ function GameBoard() {
     getCell(row, column).addToken(player);
   };
 
-  const printBoard = () => {
-    const boardWithCellValues = board.map((row) =>
-      row.map((cell) => cell.getValue()),
-    );
-    console.log(boardWithCellValues);
-  };
-
-  const boardIsFull = () => {
-    const boardRows = getBoard();
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-        if (boardRows[i][j].getValue() === '') {
-          return false;
-        }
-      }
-    }
-    return true;
-  };
-
   return {
     rows,
     columns,
     getBoard,
     getCell,
     placeToken,
-    printBoard,
-    boardIsFull,
   };
 }
 
 function Cell() {
   let value = '';
 
-  const addToken = (player) => {
-    value = player;
-  };
+  const addToken = (player) => (value = player);
 
   const getValue = () => value;
 
@@ -91,26 +68,10 @@ function GameController(
 
   const getActivePlayer = () => activePlayer;
 
-  const printNewRound = () => {
-    board.printBoard();
-    console.log(`${getActivePlayer().name}'s turn.`);
-  };
-
   const playRound = (row, column) => {
     if (board.getCell(row, column).isAvailable()) {
       board.placeToken(row, column, getActivePlayer().token);
-
-      const winner = checkOverallWinner();
-      if (winner) {
-        endGame(winner);
-      } else if (board.boardIsFull()) {
-        endGame();
-      } else {
-        switchPlayerTurn();
-        printNewRound();
-      }
-    } else {
-      console.log('Cell is taken. Try again');
+      switchPlayerTurn();
     }
   };
 
@@ -177,7 +138,19 @@ function GameController(
     return null;
   };
 
-  const checkOverallWinner = () => {
+  const boardIsFull = () => {
+    const boardRows = board.getBoard();
+    for (let i = 0; i < board.rows; i++) {
+      for (let j = 0; j < board.columns; j++) {
+        if (boardRows[i][j].getValue() === '') {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const checkGameWinner = () => {
     const rowWinner = checkRowsForWinner();
     const columnWinner = checkColumnsForWinner();
     const diagonalWinner = checkDiagonalForWinner();
@@ -185,28 +158,18 @@ function GameController(
     if (rowWinner || columnWinner || diagonalWinner) {
       const winnerToken = rowWinner || columnWinner || diagonalWinner;
       const winner = players.find((player) => player.token === winnerToken);
-      endGame(winner);
       return winner;
     }
 
     return null;
   };
 
-  const endGame = (winner) => {
-    if (winner) {
-      console.log(`Game over. ${winner.name} wins!`);
-    } else {
-      console.log(`It\'s a draw!`);
-    }
-  };
-
-  printNewRound();
-
   return {
     playRound,
     getActivePlayer,
-    checkOverallWinner,
+    checkGameWinner,
     getBoard: board.getBoard,
+    boardIsFull,
   };
 }
 
@@ -233,6 +196,20 @@ function ScreenController() {
         boardDiv.appendChild(cellButton);
       });
     });
+
+    const winner = game.checkGameWinner();
+    if (winner) {
+      playerTurnDiv.textContent = `${winner.name} wins!`;
+    } else if (game.boardIsFull()) {
+      playerTurnDiv.textContent = `It's a draw!`;
+    }
+
+    if (winner || game.boardIsFull()) {
+      const cells = document.querySelectorAll('.cell');
+      cells.forEach((cell) => {
+        cell.classList.add('disabled');
+      });
+    }
   };
 
   function clickHandlerBoard(e) {
