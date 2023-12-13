@@ -198,16 +198,12 @@ function ScreenController() {
     });
 
     const winner = game.checkGameWinner();
-    if (winner) {
-      playerTurnDiv.textContent = `${winner.name} wins!`;
-    } else if (game.boardIsFull()) {
-      playerTurnDiv.textContent = `It's a draw!`;
-    }
-
     if (winner || game.boardIsFull()) {
       if (winner) {
+        playerTurnDiv.textContent = `${winner.name} wins!`;
         playerTurnDiv.classList.add('winner');
       } else {
+        playerTurnDiv.textContent = `It's a draw!`;
         playerTurnDiv.classList.add('draw');
       }
       const cells = document.querySelectorAll('.cell');
@@ -216,6 +212,12 @@ function ScreenController() {
       });
     }
   };
+
+  const container = document.querySelector('.container');
+  const restartBtn = document.createElement('button');
+  restartBtn.className = 'btn';
+  restartBtn.textContent = 'Restart';
+  container.appendChild(restartBtn);
 
   function clickHandlerBoard(e) {
     const selectedRow = e.target.dataset.row;
