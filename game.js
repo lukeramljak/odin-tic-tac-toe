@@ -175,8 +175,8 @@ function GameController(
 
 function ScreenController() {
   const game = GameController();
-  const playerTurnDiv = document.querySelector('.turn');
-  const boardDiv = document.querySelector('.board');
+  const playerTurnDiv = document.getElementById('turn');
+  const boardDiv = document.getElementById('board');
 
   const updateScreen = () => {
     boardDiv.textContent = '';
@@ -189,7 +189,17 @@ function ScreenController() {
     board.forEach((row, rowIndex) => {
       row.forEach((cell, columnIndex) => {
         const cellButton = document.createElement('button');
-        cellButton.classList.add('cell');
+        cellButton.classList.add(
+          'cell',
+          'w-24',
+          'h-24',
+          'border',
+          'border-slate-700',
+          'bg-slate-800',
+          'rounded',
+          'cursor-pointer',
+          'hover:bg-slate-700',
+        );
         cellButton.dataset.row = rowIndex;
         cellButton.dataset.column = columnIndex;
         cellButton.textContent = cell.getValue();
@@ -201,21 +211,29 @@ function ScreenController() {
     if (winner || game.boardIsFull()) {
       if (winner) {
         playerTurnDiv.textContent = `${winner.name} wins!`;
-        playerTurnDiv.classList.add('winner');
+        playerTurnDiv.classList.add('bg-green-600', 'text-gray-900');
       } else {
         playerTurnDiv.textContent = `It's a draw!`;
-        playerTurnDiv.classList.add('draw');
+        playerTurnDiv.classList.add('bg-rose-500', 'text-gray-900');
       }
       const cells = document.querySelectorAll('.cell');
       cells.forEach((cell) => {
-        cell.classList.add('disabled');
+        cell.classList.add('pointer-events-none');
       });
     }
   };
 
-  const container = document.querySelector('.container');
+  const container = document.getElementById('container');
   const restartBtn = document.createElement('button');
-  restartBtn.className = 'btn';
+  restartBtn.classList.add(
+    'bg-blue-500',
+    'hover:bg-blue-700',
+    'text-white',
+    'font-bold',
+    'py-2',
+    'px-4',
+    'rounded',
+  );
   restartBtn.textContent = 'Restart';
   container.appendChild(restartBtn);
 
