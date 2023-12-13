@@ -12,9 +12,54 @@
     <div id="container" class="grid gap-6 text-center">
       <div class="flex flex-col gap-2">
         <h1 class="text-3xl font-bold">Tic Tac Toe</h1>
-        <h2 id="turn" class="rounded p-2 text-xl font-bold"></h2>
+        <h2 id="message" class="rounded p-2 text-xl font-bold">
+          Player X's turn
+        </h2>
       </div>
-      <div id="board" class="grid grid-cols-3 grid-rows-3 gap-2"></div>
+      <div id="board" class="grid grid-cols-3 grid-rows-3 gap-2">
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="0"
+        ></button>
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="1"
+        ></button>
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="2"
+        ></button>
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="3"
+        ></button>
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="4"
+        ></button>
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="5"
+        ></button>
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="6"
+        ></button>
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="7"
+        ></button>
+        <button
+          class="cell h-24 w-24 cursor-pointer rounded border border-slate-700 bg-slate-800 hover:bg-slate-700"
+          data-index="8"
+        ></button>
+      </div>
+      <button
+        id="restartBtn"
+        class="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+      >
+        Restart
+      </button>
     </div>
   </body>
 </html>
