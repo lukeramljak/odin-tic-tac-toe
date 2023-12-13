@@ -18,42 +18,19 @@ function GameBoard() {
     getCell(row, column).addToken(player);
   };
 
-  const printBoard = () => {
-    const boardWithCellValues = board.map((row) =>
-      row.map((cell) => cell.getValue()),
-    );
-    console.log(boardWithCellValues);
-  };
-
-  const boardIsFull = () => {
-    const boardRows = getBoard();
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-        if (boardRows[i][j].getValue() === '') {
-          return false;
-        }
-      }
-    }
-    return true;
-  };
-
   return {
     rows,
     columns,
     getBoard,
     getCell,
     placeToken,
-    printBoard,
-    boardIsFull,
   };
 }
 
 function Cell() {
   let value = '';
 
-  const addToken = (player) => {
-    value = player;
-  };
+  const addToken = (player) => (value = player);
 
   const getValue = () => value;
 
@@ -91,26 +68,10 @@ function GameController(
 
   const getActivePlayer = () => activePlayer;
 
-  const printNewRound = () => {
-    board.printBoard();
-    console.log(`${getActivePlayer().name}'s turn.`);
-  };
-
   const playRound = (row, column) => {
     if (board.getCell(row, column).isAvailable()) {
       board.placeToken(row, column, getActivePlayer().token);
-
-      const winner = checkOverallWinner();
-      if (winner) {
-        endGame(winner);
-      } else if (board.boardIsFull()) {
-        endGame();
-      } else {
-        switchPlayerTurn();
-        printNewRound();
-      }
-    } else {
-      console.log('Cell is taken. Try again');
+      switchPlayerTurn();
     }
   };
 
@@ -177,7 +138,19 @@ function GameController(
     return null;
   };
 
-  const checkOverallWinner = () => {
+  const boardIsFull = () => {
+    const boardRows = board.getBoard();
+    for (let i = 0; i < board.rows; i++) {
+      for (let j = 0; j < board.columns; j++) {
+        if (boardRows[i][j].getValue() === '') {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const checkGameWinner = () => {
     const rowWinner = checkRowsForWinner();
     const columnWinner = checkColumnsForWinner();
     const diagonalWinner = checkDiagonalForWinner();
@@ -185,30 +158,96 @@ function GameController(
     if (rowWinner || columnWinner || diagonalWinner) {
       const winnerToken = rowWinner || columnWinner || diagonalWinner;
       const winner = players.find((player) => player.token === winnerToken);
-      endGame(winner);
       return winner;
     }
 
     return null;
   };
 
-  const endGame = (winner) => {
-    if (winner) {
-      console.log(`Game over. ${winner.name} wins!`);
-    } else {
-      console.log(`It\'s a draw!`);
-    }
-  };
-
-  printNewRound();
-
   return {
     playRound,
     getActivePlayer,
-    checkOverallWinner,
+    checkGameWinner,
+    getBoard: board.getBoard,
+    boardIsFull,
   };
 }
 
-const game = GameController();
+function ScreenController() {
+  const game = GameController();
+  const playerTurnDiv = document.getElementById('turn');
+  const boardDiv = document.getElementById('board');
 
-module.exports = GameController;
+  const updateScreen = () => {
+    boardDiv.textContent = '';
+
+    const board = game.getBoard();
+    const activePlayer = game.getActivePlayer();
+
+    playerTurnDiv.textContent = `${activePlayer.name}'s turn`;
+
+    board.forEach((row, rowIndex) => {
+      row.forEach((cell, columnIndex) => {
+        const cellButton = document.createElement('button');
+        cellButton.classList.add(
+          'cell',
+          'w-24',
+          'h-24',
+          'border',
+          'border-slate-700',
+          'bg-slate-800',
+          'rounded',
+          'cursor-pointer',
+          'hover:bg-slate-700',
+        );
+        cellButton.dataset.row = rowIndex;
+        cellButton.dataset.column = columnIndex;
+        cellButton.textContent = cell.getValue();
+        boardDiv.appendChild(cellButton);
+      });
+    });
+
+    const winner = game.checkGameWinner();
+    if (winner || game.boardIsFull()) {
+      if (winner) {
+        playerTurnDiv.textContent = `${winner.name} wins!`;
+        playerTurnDiv.classList.add('bg-green-600', 'text-gray-900');
+      } else {
+        playerTurnDiv.textContent = `It's a draw!`;
+        playerTurnDiv.classList.add('bg-rose-500', 'text-gray-900');
+      }
+      const cells = document.querySelectorAll('.cell');
+      cells.forEach((cell) => {
+        cell.classList.add('pointer-events-none');
+      });
+    }
+  };
+
+  const container = document.getElementById('container');
+  const restartBtn = document.createElement('button');
+  restartBtn.classList.add(
+    'bg-blue-500',
+    'hover:bg-blue-700',
+    'text-white',
+    'font-bold',
+    'py-2',
+    'px-4',
+    'rounded',
+  );
+  restartBtn.textContent = 'Restart';
+  container.appendChild(restartBtn);
+
+  function clickHandlerBoard(e) {
+    const selectedRow = e.target.dataset.row;
+    const selectedColumn = e.target.dataset.column;
+    if (!selectedRow || !selectedColumn) return;
+
+    game.playRound(selectedRow, selectedColumn);
+    updateScreen();
+  }
+  boardDiv.addEventListener('click', clickHandlerBoard);
+
+  updateScreen();
+}
+
+ScreenController();
