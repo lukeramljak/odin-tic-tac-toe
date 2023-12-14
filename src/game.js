@@ -47,6 +47,7 @@ const displayController = (() => {
     gameBoard.reset();
     gameController.reset();
     updateGameBoard();
+    messageElement.classList.remove('text-rose-500', 'text-green-500');
     setMessageElement("Player X's turn");
   });
 
@@ -59,9 +60,12 @@ const displayController = (() => {
   const setResultMessage = (winner) => {
     if (winner === 'Draw') {
       setMessageElement("It's a draw!");
+      messageElement.classList.add('text-rose-500');
     } else {
       setMessageElement(`Player ${winner} wins!`);
+      messageElement.classList.add('text-green-500');
     }
+    console.log(messageElement.classList);
   };
 
   const setMessageElement = (message) => {
